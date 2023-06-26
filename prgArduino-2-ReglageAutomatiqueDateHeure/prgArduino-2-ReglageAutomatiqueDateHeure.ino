@@ -9,8 +9,8 @@
                                                                                       \_|
   Fichier :       prgArduino-2-ReglageAutomatiqueDateHeure.ino
   
-  Description :   Programme permettant de régler la date et l'heure, "automatiquement" lors de l'upload de ce code
-                  dans votre DS3231, via votre Arduino (la date et heure inscrite sera celle de votre ordinateur)
+  Description :   Programme permettant de régler la date et l'heure, "automatiquement" après de l'upload de ce code
+                  dans votre DS3231, et redémarrage de votre Arduino (la date et heure inscrite sera celle de votre ordinateur)
                   
   Remarques :     - la librairie utilisée ici sera la "RTClib" de Adafruit (https://github.com/adafruit/RTClib)
                   - l'arduino utilisé dans cet exemple sera un Arduino Nano
@@ -33,12 +33,13 @@ void setup() {
 
   // Initialisation de la liaison série (PC <-> Arduino Nano)
   Serial.begin(9600);
-  Serial.println(F("======================================================================"));
-  Serial.println(F("Exemple DS3231 #2 : réglage 'automatique', à l'upload de ce programme,"));
-  Serial.println(F("                    de la date et heure de votre DS3231 via l'Arduino,"));
-  Serial.println(F("                    en utilisant la date et heure de votre ordinateur "));
-  Serial.println(F("======================================================================"));
+  Serial.println(F("==============================================================================="));
+  Serial.println(F("Exemple DS3231 #2 : mise à jour automatique de la date et heure de votre DS3231"));
+  Serial.println(F("                    après upload de ce programme / redémarrage de votre arduino"));
+  Serial.println(F("                    (la date et heure utilisée sera celle de votre ordinateur)" ));
+  Serial.println(F("==============================================================================="));
   Serial.println("");
+
 
   // Initialisation du module DS 3231
   if (!ds3231.begin()) {
@@ -46,17 +47,19 @@ void setup() {
     Serial.flush();
     while (1);
   }
+  
 
-  // *************************************************************************************************
-  // Option 1 : réglage systématique de la date/heure du DS3231, lors de chaque upload de ce programme
-  // *************************************************************************************************
+
+  // ************************************************************************************************************
+  // Option 1 : réglage systématique de la date/heure du DS3231, après chaque upload/redémarrage de votre arduino
+  // ************************************************************************************************************
   ds3231.adjust(DateTime(F(__DATE__), F(__TIME__)));    
  
   
   // *****************************************************************************************
-  // Option 2 : mise à jour de la date/heure du DS3231, lors de chaque upload de ce programme,
-  //            SEULEMENT si le DS3231 signale qu'il a "perdu l'heure" (ce qui peut arriver si
-  //            sa pile de secours a été défaillante, par exemple)
+  // Option 2 : mise à jour de la date et heure de votre DS3231, après upload de ce programme,
+  //            SEULEMENT si le DS3231 signale qu'il a "perdu l'heure" (ce qui a pu arriver
+  //            si sa pile de secours a été défaillante, par exemple)
   // *****************************************************************************************
   // if (ds3231.lostPower()) {
   //  ds3231.adjust(DateTime(F(__DATE__), F(__TIME__)));      
@@ -69,8 +72,8 @@ void setup() {
   //                                                                               <-----
   // ====================================================================================
 
-}
 
+}
 
 // =================
 // Boucle principale
