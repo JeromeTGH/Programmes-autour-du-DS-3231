@@ -26,7 +26,7 @@
 RTC_DS3231 ds3231;
 
 // Constante(s)
-char joursDeLaSemaine[7][8] = {"Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"};    // 7 jours de huit caractères de long
+char joursDeLaSemaine[7][12] = {"Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"};
 
 
 // ========================
@@ -52,6 +52,20 @@ void setup() {
 
 }
 
+
+// =================================================================================
+// Fonction : formateValeurSurDeuxChiffresMinimum
+// (permet d'avoir une homogénéïté, au niveau de l'affichage, sur le moniteur série)
+// =================================================================================
+String formateValeurSurDeuxChiffresMinimum(int nombre)
+{
+  if (nombre < 10)
+    return "0" + String(nombre);
+  else
+    return String(nombre);
+}
+
+
 // =================
 // Boucle principale
 // =================
@@ -62,19 +76,19 @@ void loop() {
 
   // Affichage de ça sur le moniteur série
   Serial.print("Date/heure actuelle (DS3231) : ");
-  Serial.print(dateHeureDuDS3231.year(), DEC);
-  Serial.print("/");
-  Serial.print(dateHeureDuDS3231.month(), DEC);
-  Serial.print("/");
-  Serial.print(dateHeureDuDS3231.day(), DEC);
-  Serial.print("/");
   Serial.print(joursDeLaSemaine[dateHeureDuDS3231.dayOfTheWeek()]);
-  Serial.print(") ");
-  Serial.print(dateHeureDuDS3231.hour(), DEC);
+  Serial.print(" ");
+  Serial.print(formateValeurSurDeuxChiffresMinimum(dateHeureDuDS3231.day()));
+  Serial.print("/");
+  Serial.print(formateValeurSurDeuxChiffresMinimum(dateHeureDuDS3231.month()));
+  Serial.print("/");
+  Serial.print(formateValeurSurDeuxChiffresMinimum(dateHeureDuDS3231.year()));
+  Serial.print(" ");
+  Serial.print(formateValeurSurDeuxChiffresMinimum(dateHeureDuDS3231.hour()));
   Serial.print(":");
-  Serial.print(dateHeureDuDS3231.minute(), DEC);
+  Serial.print(formateValeurSurDeuxChiffresMinimum(dateHeureDuDS3231.minute()));
   Serial.print(":");
-  Serial.print(dateHeureDuDS3231.second(), DEC);
+  Serial.print(formateValeurSurDeuxChiffresMinimum(dateHeureDuDS3231.second()));
   Serial.println();
 
   // Attente de 2 secondes, avant relecture de l'heure (histoire de vérifier que l'horloge RTC "avance bien" !)

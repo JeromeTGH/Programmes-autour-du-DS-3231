@@ -40,7 +40,7 @@ void setup() {
 
   // Initialisation du module DS 3231
   if (!ds3231.begin()) {
-    Serial.println("[ERREUR] Impossible de se connecter au module DS3231 (vérifier le câblage, par exemple");
+    Serial.println("[ERREUR] Impossible de se connecter au module DS3231 (câblage incorrect, peut-être ?)");
     Serial.flush();
     while (1);
   }
@@ -60,6 +60,7 @@ void setup() {
         uint8_t   Secondes  = 0;        // de 0 à 59
         
   ds3231.adjust(DateTime(Annee, Mois, Jour, Heure, Minutes, Secondes));
+  Serial.println("Enregitrement de la nouvelle date/heure réussi !");
 
 }
 
