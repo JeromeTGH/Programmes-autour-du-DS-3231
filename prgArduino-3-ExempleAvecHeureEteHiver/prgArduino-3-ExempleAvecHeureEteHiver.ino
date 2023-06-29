@@ -16,7 +16,9 @@
                   - l'arduino utilisé pour tester ce programme sera un Arduino Nano
                   - ce programme analysera la date/heure locale du PC, fera une conversion vers de l'UTC, sur la base du
                     fuseau horaire "France" (étant entendu qu'en France nous sommes en "UTC+1" en hiver, et en "UTC+2" en été)
-                  - ce programme peut mal fonctionner si vous l'uploadez juste au moment ou aux alentours d'un changement d'heure
+                  - ce programme peut mal fonctionner si vous l'uploadez juste au moment ou aux alentours d'un changement d'heure (été ↔ hiver, j'entends)
+                  - ATTENTION : chaque "reset" de l'arduino reprogramme la dernière heure connue du PC, et faussera donc ensuite l'heure (en fait, ici,
+                                il ne s'agit que d'un programme exemple de base, pour illustrer une potentielle fonction "heure d'été / heure d'hiver"
                                     
   Auteur :        Jérôme TOMSKI (https://passionelectronique.fr/)
   Créé le :       29.06.2023
@@ -30,13 +32,13 @@
 RTC_DS3231 ds3231;
 
 // Constantes
-const int nombreDheuresArajouterEnEte     = 2;        // En France, par rapport à "l'heure UTC"
-const int nombreDheuresArajouterEnHiver   = 1;        // En France, par rapport à "l'heure UTC"
+const int nombreDheuresArajouterOuEnleverEnHiver  = 1;      // En France, en heure d'été, nous somme en "UTC + 1 heure" (d'où le "1" ici)
+const int nombreDheuresArajouterOuEnleverEnEte    = 2;      // En France, en heure d'été, nous somme en "UTC + 2 heures" (d'où le "2" ici)
 
-const char joursDeLaSemaine[7][12]        = {"dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"};
+const char joursDeLaSemaine[7][12]                = {"dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"};
 
-const int nombreDeSecondesArajouter       = 10;       // Pour compenser le temps d'upload de ce programme, lors de l'enregistrement
-                                                      // de la date/heure dans cette horloge RTC
+const int nombreDeSecondesAcompenser              = 10;     // Pour compenser le temps d'upload de ce programme, lors de l'enregistrement
+                                                            // de la date/heure dans cette horloge RTC
 
 // ========================
 // Initialisation programme
@@ -58,21 +60,38 @@ void setup() {
     Serial.flush();
     while (1);
   }
+
   
+  // Affichage des paramètres saisis (heures UTC, été/hiver)
+  Serial.println(F("Paramètres entrés (pour compensation en heures, conversion UTC <-> heure locale du pays) : "));
+  Serial.print(F("   → pour l'hiver : "));
+  if(nombreDheuresArajouterOuEnleverEnHiver>0)
+    Serial.print(F("+"));
+  Serial.print(nombreDheuresArajouterOuEnleverEnHiver);
+  Serial.print(F(" H"));
+  Serial.println();
+  Serial.print(F("   → pour l'été   : "));
+  if(nombreDheuresArajouterOuEnleverEnEte>0)
+    Serial.print(F("+"));
+  Serial.print(nombreDheuresArajouterOuEnleverEnEte);
+  Serial.print(F(" H"));
+  Serial.println();
+  Serial.println();
+
 
   // Récupération de la date/heure de votre PC (depuis où vous uploadez ce programme, vers votre arduino)
   DateTime dateHeurePC (F(__DATE__), F(__TIME__));       // Récupération de la date et heure de votre PC (on peut être ici en heure d'été ou d'hiver)
-  DateTime dateHeureLocale (dateHeurePC + TimeSpan(0,0,0,nombreDeSecondesArajouter));    // Ajoute 0 jour, 0 heures, 0 minutes, et x secondes
+  DateTime dateHeureLocale (dateHeurePC + TimeSpan(0,0,0,nombreDeSecondesAcompenser));    // Ajoute 0 jour, 0 heures, 0 minutes, et x secondes
 
 
   // Affichage de cette date/heure là sur le moniteur série, de l'IDE Arduino
-  Serial.println(F("Date/heure lue sur le PC : "));
+  Serial.println(F("Date/heure (locale) lue sur le PC : "));
   Serial.print(F("   → "));
   afficheUneDateHeureSurLeMoniteurSerie(dateHeureLocale);
   Serial.println();
 
   // Affichage du fait qu'il s'agisse ou non d'une heure d'été/hiver
-  Serial.print(F("   → on est en heure d'"));
+  Serial.print(F("   → remarque : on est en heure d'"));
   if(estOnEnHeureDeEte(dateHeureLocale))
     Serial.print(F("été"));
   else
@@ -80,28 +99,36 @@ void setup() {
   Serial.println();
   Serial.println();
 
-  // Calcul du nombre d'heures à retrancher, pour passer en heure UTC
-  int nbreDheuresAretrancher = estOnEnHeureDeEte(dateHeureLocale) ? nombreDheuresArajouterEnEte : nombreDheuresArajouterEnHiver;
+  // Calcul du nombre d'heures à retrancher ou rajouter, pour passer en heure UTC
+  int nbreDheuresAretrancherOuAjouter = estOnEnHeureDeEte(dateHeureLocale) ? nombreDheuresArajouterOuEnleverEnEte : nombreDheuresArajouterOuEnleverEnHiver;    
 
-  // Enregistrement de la date/heure au format UTC
-  Serial.println(F("Enregistrement de la date/heure dans le DS3231, au format UTC :"));
-  DateTime dateHeureUTC     (dateHeureLocale - TimeSpan(0,nbreDheuresAretrancher,0,0));    // Retranche 0 jour, x heures, 0 minutes, et 0 secondes
+  // Conversion de la date/heure locale au format UTC
+  Serial.println(F("Date/heure (UTC) d'après la date/heure locale :"));
+  DateTime dateHeureUTC     (dateHeureLocale - TimeSpan(0,nbreDheuresAretrancherOuAjouter,0,0));
+  Serial.print(F("   → "));
+  afficheUneDateHeureSurLeMoniteurSerie(dateHeureUTC);
+  Serial.println();
+  Serial.println();
+
+  // Enregistrement de cette date/heure UTC dans le DS3231
+  Serial.println(F("Enregistrement de cette date/heure UTC dans le DS3231 :"));
   ds3231.adjust(dateHeureUTC);
   Serial.println(F("   → effectué"));
   Serial.println();
 
+
   // Lecture de la date/heure contenue dans le DS 3231
   Serial.println(F("Lecture de la date/heure contenue dans le DS 3231 :"));
   DateTime dateHeureDuDS3231 = ds3231.now();
-  Serial.print(F("   → tel que lu dans l'horloge :  "));
+  Serial.print(F("   → tel que lu dans l'horloge  : "));
   afficheUneDateHeureSurLeMoniteurSerie(dateHeureDuDS3231);
-  Serial.println();
+  Serial.println(" (UTC)");
 
-  // Calcul du nombre d'heures à rajouter, pour passer en heure d'été ou d'hiver
-  int nbreDheuresAajouter = estOnEnHeureDeEte(dateHeureLocale) ? nombreDheuresArajouterEnEte : nombreDheuresArajouterEnHiver;
+  // Calcul du nombre d'heures à rajouter ou enlever, pour arriver à l'heure de "notre fuseau horaire (+ compensation été/hiver)
+  int nbreDheuresAajouterOuRetirer = estOnEnHeureDeEte(dateHeureLocale) ? nombreDheuresArajouterOuEnleverEnEte : nombreDheuresArajouterOuEnleverEnHiver;
   
-  // Conversion de la date/heure UTC contenue dans le DS3231, pour l'afficher au format UTC+1 ou UTC+2, selon si on est respectivement en heure d'hiver ou d'été
-  DateTime dateHeureDuDS3231Corrige (dateHeureDuDS3231 + TimeSpan(0,nbreDheuresAajouter,0,0));    // On ajoute 0 jour, x heure, 0 minute, et 0 seconde
+  // Conversion de la date/heure UTC contenue dans le DS3231 en date/heure locale, correspondant à notre fuseau horaire (avec compensation heure d'été ou hiver)
+  DateTime dateHeureDuDS3231Corrige (dateHeureDuDS3231 + TimeSpan(0,nbreDheuresAajouterOuRetirer,0,0));    // On ajoute ou retire 0 jour, x heure, 0 minute, et 0 seconde
   Serial.print(F("   → au format \"local\" (France) : "));
   afficheUneDateHeureSurLeMoniteurSerie(dateHeureDuDS3231Corrige);
   Serial.println();
