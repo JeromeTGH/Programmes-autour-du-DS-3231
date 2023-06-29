@@ -7,7 +7,7 @@
   \__|   \__,_|___||___|_|\___/|_| [_|    \____/|_|\___|\____\__\_|  \___/|_| |_|_|\__  |\__,_|\___|
                                                                                       | |
                                                                                       \_|
-  Fichier :       prgArduino-3-LectureDateHeureDS3231.ino
+  Fichier :       prgArduino-2-LectureDateHeureDS3231.ino
   
   Description :   Programme permettant de lire la date et heure "en cours" dans le DS3231
                   
@@ -37,7 +37,7 @@ void setup() {
   // Initialisation de la liaison série (PC <-> Arduino Nano)
   Serial.begin(9600);
   Serial.println(F("========================================================================"));
-  Serial.println(F("Exemple DS3231 #3 : lecture de la date et heure contenue dans le DS3231,"));
+  Serial.println(F("Exemple DS3231 #2 : lecture de la date et heure contenue dans le DS3231,"));
   Serial.println(F("                    avec rafraîchissement toutes les 2 secondes         "));
   Serial.println(F("========================================================================"));
   Serial.println("");

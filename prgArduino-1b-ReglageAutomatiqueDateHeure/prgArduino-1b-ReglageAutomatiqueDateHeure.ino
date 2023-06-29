@@ -7,7 +7,7 @@
   \__|   \__,_|___||___|_|\___/|_| [_|    \____/|_|\___|\____\__\_|  \___/|_| |_|_|\__  |\__,_|\___|
                                                                                       | |
                                                                                       \_|
-  Fichier :       prgArduino-2-ReglageAutomatiqueDateHeure.ino
+  Fichier :       prgArduino-1b-ReglageAutomatiqueDateHeure.ino
   
   Description :   Programme permettant de régler la date et l'heure, "automatiquement" après de l'upload de ce code
                   dans votre DS3231, et redémarrage de votre Arduino (la date et heure inscrite sera celle de votre ordinateur)
@@ -33,11 +33,11 @@ void setup() {
 
   // Initialisation de la liaison série (PC <-> Arduino Nano)
   Serial.begin(9600);
-  Serial.println(F("==============================================================================="));
-  Serial.println(F("Exemple DS3231 #2 : mise à jour automatique de la date et heure de votre DS3231"));
-  Serial.println(F("                    après upload de ce programme / redémarrage de votre arduino"));
-  Serial.println(F("                    (la date et heure utilisée sera celle de votre ordinateur)" ));
-  Serial.println(F("==============================================================================="));
+  Serial.println(F("================================================================================"));
+  Serial.println(F("Exemple DS3231 #1b : mise à jour automatique de la date et heure de votre DS3231"));
+  Serial.println(F("                     après upload de ce programme / redémarrage de votre arduino"));
+  Serial.println(F("                     (la date et heure utilisée sera celle de votre ordinateur)" ));
+  Serial.println(F("================================================================================"));
   Serial.println("");
 
 

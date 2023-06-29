@@ -7,7 +7,7 @@
   \__|   \__,_|___||___|_|\___/|_| [_|    \____/|_|\___|\____\__\_|  \___/|_| |_|_|\__  |\__,_|\___|
                                                                                       | |
                                                                                       \_|
-  Fichier :       prgArduino-1-ReglageManuelDateHeure.ino
+  Fichier :       prgArduino-1a-ReglageManuelDateHeure.ino
   
   Description :   Programme permettant de régler la date et l'heure "manuellement",
                   c'est à dire en inscrivant ces valeurs là, précisément, dans le code
@@ -33,9 +33,9 @@ void setup() {
 
   // Initialisation de la liaison série (PC <-> arduino nano)
   Serial.begin(9600);
-  Serial.println(F("========================================================================="));
-  Serial.println(F("Exemple DS3231 #1 : réglage 'manuel' de la date/heure d'un module DS 3231"));
-  Serial.println(F("========================================================================="));
+  Serial.println(F("=========================================================================="));
+  Serial.println(F("Exemple DS3231 #1a : réglage 'manuel' de la date/heure d'un module DS 3231"));
+  Serial.println(F("=========================================================================="));
   Serial.println("");
 
   // Initialisation du module DS 3231
