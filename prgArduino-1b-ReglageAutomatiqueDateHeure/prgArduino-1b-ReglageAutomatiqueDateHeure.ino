@@ -72,7 +72,7 @@ void setup() {
   //                                                                               <-----
   // ====================================================================================
 
-  Serial.println("Enregitrement de la nouvelle date/heure réussi !");
+  Serial.println("Enregistrement de la nouvelle date/heure réussi !");
 
 }
 

@@ -60,7 +60,7 @@ void setup() {
         uint8_t   Secondes  = 0;        // de 0 à 59
         
   ds3231.adjust(DateTime(Annee, Mois, Jour, Heure, Minutes, Secondes));
-  Serial.println("Enregitrement de la nouvelle date/heure réussi !");
+  Serial.println("Enregistrement de la nouvelle date/heure réussi !");
 
 }
 

@@ -180,8 +180,8 @@ String formateValeurSurDeuxChiffresMinimum(int nombre)
 
 
 // =================================================================================
-// Fonction : xxxxxxxxx
-// (permet xxxxxxxxx)
+// Fonction : estOnEnHeureDeEte
+// (permet de dire si oui ou non nous serions actuellement en heure d'été)
 // =================================================================================
 boolean estOnEnHeureDeEte(DateTime dateHeureAanalyser) {
 
